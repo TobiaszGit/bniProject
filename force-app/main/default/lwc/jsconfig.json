@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "baseUrl": ".",
+        "paths": {
+            "c/bniListAccounts": [
+                "bniListAccounts/bniListAccounts.js"
+            ],
+            "c/contactDetails": [
+                "contactDetails/contactDetails.js"
+            ],
+            "c/bniContactsList": [
+                "bniContactsList/bniContactsList.js"
+            ]
+        }
+    },
+    "include": [
+        "**/*",
+        "../../../../.sfdx/typings/lwc/**/*.d.ts"
+    ],
+    "typeAcquisition": {
+        "include": [
+            "jest"
+        ]
+    }
+}

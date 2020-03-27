@@ -3,10 +3,9 @@ import getTopics from '@salesforce/apex/BniController.getTopics';
 
 export default class ContactFinder extends LightningElement {
     topics = '';
+    
     showContactDetails = false;
-    showNewContactForm = false;
-    showMyContacts = false;
-    @api contactToShow;
+    contactToShow;
     matchedTopics;
 
    
@@ -31,13 +30,6 @@ export default class ContactFinder extends LightningElement {
         }, 300);
     }
 
-    myContacts(){
-        this.showMyContacts = !this.showMyContacts
-    }
-
-    addContact(){
-        this.showNewContactForm = !this.showNewContactForm;
-    }
 
 
     handleSwitchDetail(event){
@@ -46,7 +38,7 @@ export default class ContactFinder extends LightningElement {
     }
 
     handleSwitchNewContact(){
-        this.showNewContactForm = !this.showNewContactForm; 
+        this.template.querySelector('lightning-tabset').activeTabValue = 'find contact';
     }
 
     pickTopic(event){

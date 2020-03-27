@@ -1,8 +1,30 @@
 <template>
-    <lightning-card title="Moje kontakty" icon-name="standard:people">
+    <lightning-card title={userNameTitle} icon-name="standard:people">
         <div class="slds-card__body_inner">
-            <lightning-button variant="brand-outline" onclick={handleToggleClick} label="Powrót"></lightning-button>
-
+            <template if:true={contacts}>
+        
+                <table class="slds-table slds-table_bordered">
+                    <tr>
+                        <th>Imie</th>
+                        <th>Stanowisko</th>
+                        <th>Firma</th>
+                        <th>Email</th>
+                        <th>Telefon</th>
+                        <th>Data dodania</th>
+                    </tr>
+                    <template for:each={contacts} for:item="contact" for:index="index">
+                        <tr data-id={contact.Id} key={contact.Id} class="cursor-pointer" onclick={handleToggleClick}>
+                            <td>{contact.Name}</td>
+                            <td>{contact.Title}</td>
+                            <td>{contact.Email}</td>
+                            <td>{contact.Phone}</td>
+                            <td>{contact.Account.Name}</td>
+                            <td>{contact.CreatedDate}</td>
+                        </tr>
+                    </template>
+                </table>
+                
+            </template>
         </div>
     </lightning-card>
 </template>

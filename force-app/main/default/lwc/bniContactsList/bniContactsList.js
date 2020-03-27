@@ -5,7 +5,7 @@ import getContacts from '@salesforce/apex/BniController.getContacts';
 export default class BniContactsList extends LightningElement {
     @api topic;
 
-    @wire(getContacts, {topicName: '$topic'}) contacts;
+    @wire(getContacts, {str: '$topic', searchByUserId: false}) contacts;
     
 
     handleToggleClick(event){

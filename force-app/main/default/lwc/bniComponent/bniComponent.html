@@ -1,39 +1,41 @@
 <template>
-    <template if:false={showNewContactForm}>
-        <template if:true={showContactDetails}>
-            <c-contact-details contactid={contactToShow} onswitchdetailsview={handleSwitchDetail}></c-contact-details>
-        </template>
-        <template if:true={showMyContacts}>
-            <c-my-contacts></c-my-contacts>
-        </template>
-        <template if:false={showMyContacts}>
-            <template if:false={showContactDetails}>
-            <lightning-card title="Wyszukiwarka" icon-name="standard:people">
-                <lightning-button label="Dodaj kontakt" slot="actions" onclick={addContact}></lightning-button>
-                <lightning-button label="Moje kontakty" slot="actions" onclick={myContacts}></lightning-button>
-                <div class="slds-card__body_inner">
-                    <lightning-input 
-                        onchange={showContacts}
-                        type="search"
-                        variant="label-hidden"
-                        class="slds-m-bottom_small"
-                        label="Search"
-                        placeholder="Podaj specjalizację"
-                        value={topics}>
-                    </lightning-input> 
-                    
-                    <div class="slds-p-bottom_medium">
-                        <template for:each={matchedTopics} for:item="t">
-                            <lightning-badge key={t} label={t} onclick={pickTopic}></lightning-badge>
-                        </template>
-                    </div>
-                    <c-bni-contacts-list topic={topics} onswitchdetailsview={handleSwitchDetail}></c-bni-contacts-list>
-                </div>
-            </lightning-card>
+    <lightning-tabset variant="scoped">
+        <lightning-tab label="Znajdź kontakt" value="find contact">
+            <template if:true={showContactDetails}>
+                <c-contact-details contactid={contactToShow} onswitchdetailsview={handleSwitchDetail}></c-contact-details>
             </template>
-        </template>
-    </template> 
-    <template if:true={showNewContactForm}>
-        <c-new-bni-contact topics-list={topicsList.data} onswitchnewcontact={handleSwitchNewContact}></c-new-bni-contact>
-    </template>
+            <template if:false={showContactDetails}>
+                <lightning-card title="Wyszukaj" icon-name="standard:people">
+                    <div class="slds-card__body_inner">
+                        <lightning-input 
+                            onchange={showContacts}
+                            type="search"
+                            variant="label-hidden"
+                            class="slds-m-bottom_small"
+                            label="Search"
+                            placeholder="Podaj specjalizację"
+                            value={topics}>
+                        </lightning-input> 
+                        
+                        <div class="slds-p-bottom_medium">
+                            <template for:each={matchedTopics} for:item="t">
+                                <lightning-badge key={t} label={t} onclick={pickTopic}></lightning-badge>
+                            </template>
+                        </div>
+                        <c-bni-contacts-list topic={topics} onswitchdetailsview={handleSwitchDetail}></c-bni-contacts-list>
+                    </div>
+                </lightning-card>
+            </template>
+        </lightning-tab>
+        <lightning-tab label="Dodaj" value="add contact">
+            <c-new-bni-contact topics-list={topicsList.data} onswitchnewcontact={handleSwitchNewContact}></c-new-bni-contact>
+        </lightning-tab>
+        <lightning-tab label="Moje kontakty" value="my contacts">
+            <c-my-contacts></c-my-contacts>
+        </lightning-tab>
+    </lightning-tabset>
+
+
+     
+    
 </template> 

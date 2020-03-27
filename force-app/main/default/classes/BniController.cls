@@ -2,7 +2,7 @@ global class BniController {
 
     @AuraEnabled(Cacheable=true)
     global static List<String> getTopics() {
-        List<Contact> specjalizacje = [SELECT Account.Specjalizacja__c FROM Contact WHERE Account.Specjalizacja__c != null];
+        List<Contact> specjalizacje = [SELECT Account.Specjalizacja__c, Owner.Name FROM Contact WHERE Account.Specjalizacja__c != null];
         Set<String> topics = new Set<String>();
         for(Contact a:specjalizacje){
             topics.addAll(a.Account.Specjalizacja__c.split(';'));
@@ -11,10 +11,12 @@ global class BniController {
     }
 
     @AuraEnabled(Cacheable=true)
-    global static List<Contact> getContacts(String topicName){
-        system.debug(topicName);
-        topicName = '%' + topicName + '%';
-        return [SELECT Id, Name, Phone, Title, Account.Name, Account.Specjalizacja__c, Account.website, CreatedBy.Name FROM Contact WHERE Account.Specjalizacja__c LIKE :topicName];
+    global static List<Contact> getContacts(String str, Boolean searchByUserId){
+        if(!searchByUserId){
+            str = '%' + str + '%';
+            return [SELECT Id, Name, Phone, Title, Account.Name, Account.Specjalizacja__c, Account.website, CreatedBy.Name FROM Contact WHERE Account.Specjalizacja__c LIKE :str];
+        }
+        return [SELECT Id, Name, FirstName, LastName, Email, Phone, Title, Account.Name, Account.Specjalizacja__c, Account.Website, Account.NIP__c, CreatedDate FROM Contact WHERE OwnerId=:str];
         //return [SELECT Id, Name, Account.website FROM Contact WHERE AccountId IN (SELECT EntityId FROM TopicAssignment WHERE topic.name LIKE :topicName)];
     }
 

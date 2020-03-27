@@ -3,14 +3,20 @@
         "experimentalDecorators": true,
         "baseUrl": ".",
         "paths": {
-            "c/bniListAccounts": [
-                "bniListAccounts/bniListAccounts.js"
-            ],
             "c/contactDetails": [
                 "contactDetails/contactDetails.js"
             ],
             "c/bniContactsList": [
                 "bniContactsList/bniContactsList.js"
+            ],
+            "c/bniComponent": [
+                "bniComponent/bniComponent.js"
+            ],
+            "c/newBniContact": [
+                "newBniContact/newBniContact.js"
+            ],
+            "c/myContacts": [
+                "myContacts/myContacts.js"
             ]
         }
     },

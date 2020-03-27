@@ -1,0 +1,49 @@
+<template>
+    <lightning-card title="Dodaj kontakt" icon-name="standard:people">
+        <div class="slds-card__body_inner">
+            <lightning-button variant="brand-outline" onclick={handleToggleClick} label="Powrót"></lightning-button>
+            <lightning-layout multiple-rows="true">
+                <lightning-layout-item padding="around-small" flexibility="auto">
+                    <lightning-input name=firstName type="text" label="Imie"></lightning-input>
+                    <lightning-input name="lastName" type="text" label="Nazwisko" required></lightning-input>
+                    <lightning-input name="title" type="text" label="Stanowisko"></lightning-input>
+                    <lightning-input name="phone"
+                                     type="tel" 
+                                     label="Telefon"
+                                     placeholder="+48 123 123 123"></lightning-input>
+                    <lightning-input name="email" type="email" placeholder="example@address.com" label="Adres e-mail"></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item padding="around-small" flexibility="auto">
+                    <lightning-input name="nip" type="text" label="NIP firmy" minlength="10" maxlength="10" onchange={validateNip} required></lightning-input>
+                    <lightning-input name="accountName" disabled={isAccountExist} type="text" label="Firma"></lightning-input>
+                    <lightning-input name="website" disabled={isAccountExist} type="text" label="Strona internetowa"></lightning-input>
+                    <lightning-input-address
+                                    name="address"
+                                    disabled={isAccountExist}
+                                    address-label="Adres firmy"
+                                    street-label="Ulica"
+                                    city-label="Miejscowość"
+                                    postal-code-label="Kod pocztowy"
+                                    country-label="Państwo"
+                                    province-label="Województwo"></lightning-input-address>
+
+                    <lightning-input type="search" disabled={isAccountExist} label="# Tagi" onchange={matchTopic}></lightning-input>
+
+                    <template for:each={matchedTopics} for:item="t">
+                            <a class="slds-p-left_small" key={t} onclick={pickTopic}>{t}</a>
+                    </template>
+                    <br><br>
+                    <template for:each={badgeTopics} for:item="t">
+                        <lightning-badge key={t} label={t} onclick={removeTopic}></lightning-badge>
+                    </template>
+                </lightning-layout-item>
+            </lightning-layout>
+
+            
+            <lightning-button label="Zapisz" variant="brand" onclick={saveContact}></lightning-button>
+            <template if:true={loaded}>
+                <lightning-spinner alternative-text="Loading"></lightning-spinner>
+            </template>
+        </div>
+    </lightning-card>
+</template>

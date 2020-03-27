@@ -1,3 +1,50 @@
 <template>
-    
+    <lightning-card title="Edycja" icon-name="standard:people">
+        <div class="slds-card__body_inner">
+            <lightning-button variant="brand-outline" onclick={handleToggleClick} label="Powrót"></lightning-button>
+            <lightning-layout multiple-rows="true">
+                <lightning-layout-item padding="around-small" flexibility="auto">
+                    <lightning-input name=firstName value={contact.FirstName} type="text" label="Imie"></lightning-input>
+                    <lightning-input name="lastName" value={contact.LastName} type="text" label="Nazwisko" required></lightning-input>
+                    <lightning-input name="title" value={contact.Title} type="text" label="Stanowisko"></lightning-input>
+                    <lightning-input name="phone"
+                                    value={contact.Phone}
+                                    type="tel" 
+                                    label="Telefon"
+                                    placeholder="+48 123 123 123"></lightning-input>
+                    <lightning-input name="email" value={contact.Email} type="email" placeholder="example@address.com" label="Adres e-mail"></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item padding="around-small" flexibility="auto">
+                    <lightning-input name="nip" value={contact.Account.NIP__c} type="text" label="NIP firmy" minlength="10" maxlength="10" onchange={validateNip} required></lightning-input>
+                    <lightning-input name="accountName" value={contact.Account.Name} disabled={isAccountExist} type="text" label="Firma"></lightning-input>
+                    <lightning-input name="website" value={contact.Account.Website} disabled={isAccountExist} type="text" label="Strona internetowa"></lightning-input>
+                    <lightning-input-address
+                                    name="address"
+                                    disabled={isAccountExist}
+                                    address-label="Adres firmy"
+                                    street-label="Ulica"
+                                    city-label="Miejscowość"
+                                    postal-code-label="Kod pocztowy"
+                                    country-label="Państwo"
+                                    province-label="Województwo"
+                                    street={contact.Account.BillingStreet}
+                                    city={contact.Account.BillingCity}
+                                    country={contact.Account.BillingCountry}
+                                    province={contact.Account.BillingState}
+                                    postal-code={contact.Account.BillingPostalCode}
+                                    ></lightning-input-address>
+
+                    <lightning-input type="search" disabled={isAccountExist} label="# Tagi" onchange={matchTopic}></lightning-input>
+
+                    <template for:each={matchedTopics} for:item="t">
+                            <a class="slds-p-left_small" key={t} onclick={pickTopic}>{t}</a>
+                    </template>
+                    <br><br>
+                    <template for:each={badges} for:item="t">
+                        <lightning-badge key={t} label={t}></lightning-badge>
+                    </template>
+                </lightning-layout-item>
+            </lightning-layout>
+        </div>
+    </lightning-card>
 </template>

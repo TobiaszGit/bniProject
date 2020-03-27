@@ -1,3 +1,0 @@
-<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global" >
-    <c:bniListAccounts />
-</aura:component>	

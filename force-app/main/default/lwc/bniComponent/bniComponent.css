@@ -1,0 +1,6 @@
+lightning-badge {
+    cursor:pointer;
+}
+lightning-badge:hover {
+    background-color: grey;
+}

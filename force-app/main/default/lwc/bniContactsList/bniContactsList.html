@@ -10,11 +10,11 @@
                 <th>Dodano przez</th>
             </tr>
             <template for:each={contacts.data} for:item="contact" for:index="index">
-                <tr data-id={contact.Id} key={contact.Id} class="cursor-pointer" onclick={handleToggleClick}>
+                <tr data-id={contact.BNI_OwnerId__c} key={contact.Id} class="cursor-pointer" onclick={viewDetails}>
                     <td>{contact.Name}</td>
                     <td>{contact.Title}</td>
                     <td>{contact.Account.Name}</td>
-                    <td>{contact.CreatedBy.Name}</td>
+                    <td>{contact.BNI_OwnerId__r.Name}</td>
                 </tr>
             </template>
         </table>

@@ -1,26 +1,26 @@
 <template>
     <lightning-card title="Edycja" icon-name="standard:people">
         <div class="slds-card__body_inner">
-            <lightning-button variant="brand-outline" onclick={handleToggleClick} label="Powrót"></lightning-button>
             <lightning-layout multiple-rows="true">
                 <lightning-layout-item padding="around-small" flexibility="auto">
-                    <lightning-input name=firstName value={contact.FirstName} type="text" label="Imie"></lightning-input>
+                    <lightning-input name=firstName value={contact.FirstName} type="text" label="Imie" required></lightning-input>
                     <lightning-input name="lastName" value={contact.LastName} type="text" label="Nazwisko" required></lightning-input>
                     <lightning-input name="title" value={contact.Title} type="text" label="Stanowisko"></lightning-input>
                     <lightning-input name="phone"
                                     value={contact.Phone}
                                     type="tel" 
                                     label="Telefon"
-                                    placeholder="+48 123 123 123"></lightning-input>
+                                    placeholder="+48 123 123 123"
+                                    pattern="^[^a-zA-Z]+"
+                                    message-when-pattern-mismatch="Wprowadź poprawny numer telefonu"></lightning-input>
                     <lightning-input name="email" value={contact.Email} type="email" placeholder="example@address.com" label="Adres e-mail"></lightning-input>
                 </lightning-layout-item>
                 <lightning-layout-item padding="around-small" flexibility="auto">
-                    <lightning-input name="nip" value={contact.Account.NIP__c} type="text" label="NIP firmy" minlength="10" maxlength="10" onchange={validateNip} required></lightning-input>
-                    <lightning-input name="accountName" value={contact.Account.Name} disabled={isAccountExist} type="text" label="Firma"></lightning-input>
-                    <lightning-input name="website" value={contact.Account.Website} disabled={isAccountExist} type="text" label="Strona internetowa"></lightning-input>
+                    <lightning-input name="nip" value={contact.Account.NIP__c} type="text" label="NIP firmy" pattern="([0-9]{10})" message-when-pattern-mismatch="Nieprawidłowy format. Wprowadź 10 cyfrowy numer NIP" onchange={validateNip} required></lightning-input>
+                    <lightning-input name="accountName" value={contact.Account.Name} type="text" label="Firma" required></lightning-input>
+                    <lightning-input name="website" value={contact.Account.Website} type="text" label="Strona internetowa"></lightning-input>
                     <lightning-input-address
                                     name="address"
-                                    disabled={isAccountExist}
                                     address-label="Adres firmy"
                                     street-label="Ulica"
                                     city-label="Miejscowość"
@@ -34,17 +34,18 @@
                                     postal-code={contact.Account.BillingPostalCode}
                                     ></lightning-input-address>
 
-                    <lightning-input type="search" disabled={isAccountExist} label="# Tagi" onchange={matchTopic}></lightning-input>
+                    <lightning-input type="search" label="# Tagi" pattern="^[A-Za-z0-9 ]+$"  message-when-pattern-mismatch="Usuń znaki specjalne" onchange={matchTopic}></lightning-input>
 
                     <template for:each={matchedTopics} for:item="t">
                             <a class="slds-p-left_small" key={t} onclick={pickTopic}>{t}</a>
                     </template>
                     <br><br>
-                    <template for:each={badges} for:item="t">
-                        <lightning-badge key={t} label={t}></lightning-badge>
+                    <template for:each={badgeTopics} for:item="t">
+                        <lightning-badge key={t} label={t} onclick={removeTopic}></lightning-badge>
                     </template>
                 </lightning-layout-item>
             </lightning-layout>
+            <lightning-button label="Zapisz" variant="brand" onclick={updateContact}></lightning-button>
         </div>
     </lightning-card>
 </template>

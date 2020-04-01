@@ -11,12 +11,13 @@ global class BniController {
     }
 
     @AuraEnabled(Cacheable=true)
-    global static List<Contact> getContacts(String str, Boolean searchByUserId){
-        if(!searchByUserId){
+    global static List<Contact> getContacts(String str, Boolean searchByOwnerId){
+        if(!searchByOwnerId){
             str = '%' + str + '%';
-            return [SELECT Id, Name, Phone, Title, Account.Name, Account.Specjalizacja__c, Account.website, CreatedBy.Name FROM Contact WHERE Account.Specjalizacja__c LIKE :str];
+            return [SELECT Id, Name, BNI_OwnerId__c, BNI_OwnerId__r.Name, Phone, Title, Account.Name, Account.Specjalizacja__c, Account.website, OwnerId, CreatedBy.Name FROM Contact WHERE Account.Specjalizacja__c LIKE :str AND BNI_OwnerId__c!=NULL];
         }
-        return [SELECT Id, Name, FirstName, LastName, Email, Phone, Title, Account.Name, Account.Specjalizacja__c, Account.Website, Account.NIP__c, CreatedDate FROM Contact WHERE OwnerId=:str];
+        System.debug('Pobieram dane uzytkownika ' + str);
+        return [SELECT Name, Email, BNI_OwnerId__c, BNI_OwnerId__r.Name, Phone, Title, CreatedDate, Account.Name, Account.Specjalizacja__c, Account.Website, Account.NIP__c FROM Contact WHERE BNI_OwnerId__c=:str AND Account.Specjalizacja__c!=null AND BNI_OwnerId__c!=NULL];
         //return [SELECT Id, Name, Account.website FROM Contact WHERE AccountId IN (SELECT EntityId FROM TopicAssignment WHERE topic.name LIKE :topicName)];
     }
 
@@ -32,7 +33,7 @@ global class BniController {
 
     @AuraEnabled(Cacheable=true)
     global static Contact getContact(String Id){
-        Contact[] con = [SELECT FirstName, LastName, Title, Phone, Email, Id, AccountId, Account.Name, Account.NIP__c, Account.Specjalizacja__c, Account.Website, CreatedBy.Name, Account.BillingStreet, Account.BillingCity, Account.BillingCountry, Account.BillingPostalCode, Account.BillingState 
+        Contact[] con = [SELECT FirstName, BNI_OwnerId__c, LastName, Title, Phone, Email, Id, AccountId, Account.Name, Account.NIP__c, Account.Specjalizacja__c, Account.Website, CreatedBy.Name, Account.BillingStreet, Account.BillingCity, Account.BillingCountry, Account.BillingPostalCode, Account.BillingState 
                           FROM Contact 
                           WHERE Id=:Id 
                           LIMIT 1];
@@ -51,40 +52,21 @@ global class BniController {
         Map<String, Object> m = (Map<String, Object>) JSON.deserializeUntyped(jsonString);
         String result = 'Dodano kontakt';
 
-        
-
-        
-
-        /*List<Topic> topics = addNewTopics((List<Object>)m.get('topics'));
-        List<TopicAssignment> topicAss = new List<TopicAssignment>();*/
-
-        
-        
-        
-            /*for(Topic t: topics){
-                topicAss.add(new TopicAssignment(
-                    EntityId = acc.Id,
-                    TopicId = t.Id
-                ));
-                System.debug(t.Name + '>dodany do assignmentu<' + acc.Name);
-            }
-            
-            insert topicAss;*/
         try {
             String accountId = upsertAccount(m, (String)m.get('accountId'));
-            upsertContact(m, accountId, '');
+            upsertContact(m, accountId, (String)m.get('contactId'));
         } catch(DmlException e){
-            result += e.getMessage();
-            result += '>DML exception<';
+            result = e.getMessage();
         }
-
+        system.debug(result);
         return result;
     }
 
     private static void upsertContact(Map<String, Object> m, String accountId, String contactId){
-        System.debug('upsert contactu');
+        System.debug('upsert contactu ' + contactId);
         Contact con = new Contact(
             AccountId = accountId,
+            BNI_OwnerId__c = (String)m.get('ownerId'), 
             FirstName = (String)m.get('firstName'),
             LastName = (String)m.get('lastName'),
             Title = (String)m.get('title'),
@@ -92,13 +74,14 @@ global class BniController {
             Email = (String)m.get('email')
         );
         if(!String.isBlank(contactId)){
+            System.debug('jednak update');
             con.Id = contactId;
         }
-        insert con;
+        upsert con;
     }
     private static Id upsertAccount(Map<String, Object> m, String id){
         Account acc;
-        System.debug('upsert acc');
+        System.debug('upsert acc ' + id);
         acc = new Account(
             Name = (String)m.get('accountName'),
             NIP__c = (String)m.get('nip'),
@@ -112,8 +95,7 @@ global class BniController {
         );
         System.debug('deklaracja ' + acc);
         if(!String.isBlank(id)){
-            System.debug('jednak update');
-            acc.Id = id;
+            acc.Id = Id;
         }
         upsert acc;
         return acc.Id;
@@ -126,34 +108,4 @@ global class BniController {
         }
         return topics;
     }
-    /*private static List<Topic> addNewTopics(List<Object> oTopics){
-
-        List<Topic> topics = [SELECT Id, Name FROM Topic];
-        List<Topic> topicsToInsert = new List<Topic>();
-        List<Topic> newTopics = new List<Topic>();
-        for(Object o: oTopics){
-            Boolean alradyExist = false;
-            for(Topic t: topics){
-                if((String)o == t.Name){
-                    alradyExist = true;
-                    newTopics.add(t);
-                    break;
-                }
-            }
-            if(!alradyExist){
-                System.debug((String)o + '<wlasnie dodany');
-                topicsToInsert.add(new Topic(
-                    Name = (String)o
-                ));
-            }
-        }
-        try{
-            insert topicsToInsert;
-        }
-        catch(DmlException e){
-            System.debug('Topiki...' + e.getMessage());
-        }
-        newTopics.addAll(topicsToInsert);
-        return newTopics;
-    }*/
 }

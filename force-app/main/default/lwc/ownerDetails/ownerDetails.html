@@ -1,0 +1,38 @@
+<template>
+    <lightning-card title="Informacje posiadacza kontaktu" icon-name="standard:people">
+        <div class="slds-card__body_inner">
+            <lightning-layout multiple-rows="true">
+                <lightning-layout-item padding="around-small" flexibility="auto">
+                    <lightning-input name=firstName value={contact.FirstName} type="text" label="Imie" ></lightning-input>
+                    <lightning-input name="lastName" value={contact.LastName} type="text" label="Nazwisko" ></lightning-input>
+                    <lightning-input name="title" value={contact.Title} type="text" label="Stanowisko"></lightning-input>
+                    <lightning-input name="phone"
+                                    value={contact.Phone}
+                                    type="tel" 
+                                    label="Telefon"></lightning-input>
+                    <lightning-input name="email" value={contact.Email} type="email" label="Adres e-mail"></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item padding="around-small" flexibility="auto">
+                    <lightning-input name="nip" value={contact.Account.NIP__c} type="text" label="NIP firmy"></lightning-input>
+                    <lightning-input name="accountName" value={contact.Account.Name} type="text" label="Firma"></lightning-input>
+                    <lightning-input name="website" value={contact.Account.Website} type="text" label="Strona internetowa"></lightning-input>
+                    <lightning-input-address
+                                    name="address"
+                                    address-label="Adres firmy"
+                                    street-label="Ulica"
+                                    city-label="Miejscowość"
+                                    postal-code-label="Kod pocztowy"
+                                    country-label="Państwo"
+                                    province-label="Województwo"
+                                    street={contact.Account.BillingStreet}
+                                    city={contact.Account.BillingCity}
+                                    country={contact.Account.BillingCountry}
+                                    province={contact.Account.BillingState}
+                                    postal-code={contact.Account.BillingPostalCode}
+                                    ></lightning-input-address>
+
+                </lightning-layout-item>
+            </lightning-layout>
+        </div>
+    </lightning-card>
+</template>

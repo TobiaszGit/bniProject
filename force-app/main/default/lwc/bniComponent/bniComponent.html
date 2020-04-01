@@ -1,41 +1,25 @@
 <template>
-    <lightning-tabset variant="scoped">
-        <lightning-tab label="Znajdź kontakt" value="find contact">
-            <template if:true={showContactDetails}>
-                <c-contact-details contactid={contactToShow} onswitchdetailsview={handleSwitchDetail}></c-contact-details>
-            </template>
-            <template if:false={showContactDetails}>
-                <lightning-card title="Wyszukaj" icon-name="standard:people">
-                    <div class="slds-card__body_inner">
-                        <lightning-input 
-                            onchange={showContacts}
-                            type="search"
-                            variant="label-hidden"
-                            class="slds-m-bottom_small"
-                            label="Search"
-                            placeholder="Podaj specjalizację"
-                            value={topics}>
-                        </lightning-input> 
-                        
-                        <div class="slds-p-bottom_medium">
-                            <template for:each={matchedTopics} for:item="t">
-                                <lightning-badge key={t} label={t} onclick={pickTopic}></lightning-badge>
-                            </template>
-                        </div>
-                        <c-bni-contacts-list topic={topics} onswitchdetailsview={handleSwitchDetail}></c-bni-contacts-list>
-                    </div>
-                </lightning-card>
-            </template>
-        </lightning-tab>
-        <lightning-tab label="Dodaj" value="add contact">
-            <c-new-bni-contact topics-list={topicsList.data} onswitchnewcontact={handleSwitchNewContact}></c-new-bni-contact>
-        </lightning-tab>
-        <lightning-tab label="Moje kontakty" value="my contacts">
-            <c-my-contacts></c-my-contacts>
-        </lightning-tab>
-    </lightning-tabset>
-
-
-     
+    
+    <lightning-card title="Wyszukaj" icon-name="standard:people">
+        <div class="slds-card__body_inner">
+            <lightning-input 
+                onchange={showContacts}
+                type="search"
+                variant="label-hidden"
+                class="slds-m-bottom_small"
+                label="Search"
+                placeholder="Podaj specjalizację"
+                value={topics}>
+            </lightning-input> 
+            
+            <div class="slds-p-bottom_medium">
+                <template for:each={matchedTopics} for:item="t">
+                    <lightning-badge key={t} label={t} onclick={pickTopic}></lightning-badge>
+                </template>
+            </div>
+            <c-bni-contacts-list topic={topics}></c-bni-contacts-list>
+        </div>
+        
+    </lightning-card>
     
 </template> 

@@ -32,14 +32,6 @@ export default class ContactFinder extends LightningElement {
 
 
 
-    handleSwitchDetail(event){
-        this.contactToShow = event.detail;
-        this.showContactDetails = !this.showContactDetails; 
-    }
-
-    handleSwitchNewContact(){
-        this.template.querySelector('lightning-tabset').activeTabValue = 'find contact';
-    }
 
     pickTopic(event){
         this.topics = event.target.label;

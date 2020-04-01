@@ -3,19 +3,20 @@
         <div class="slds-card__body_inner">
             <lightning-layout multiple-rows="true">
                 <lightning-layout-item padding="around-small" flexibility="auto">
-                    <lightning-input name=firstName type="text" label="Imie"></lightning-input>
+                    <lightning-input name=firstName type="text" label="Imie" required></lightning-input>
                     <lightning-input name="lastName" type="text" label="Nazwisko" required></lightning-input>
                     <lightning-input name="title" type="text" label="Stanowisko"></lightning-input>
                     <lightning-input name="phone"
                                      type="tel" 
                                      label="Telefon"
-                                     placeholder="+48 123 123 123"></lightning-input>
+                                     placeholder="+48 123 123 123"
+                                     pattern="^[^a-zA-Z]+"></lightning-input>
                     <lightning-input name="email" type="email" placeholder="example@address.com" label="Adres e-mail"></lightning-input>
                 </lightning-layout-item>
                 <lightning-layout-item padding="around-small" flexibility="auto">
-                    <lightning-input name="nip" type="text" label="NIP firmy" minlength="10" maxlength="10" onchange={validateNip} required></lightning-input>
-                    <lightning-input name="accountName" disabled={isAccountExist} type="text" label="Firma"></lightning-input>
-                    <lightning-input name="website" disabled={isAccountExist} type="text" label="Strona internetowa"></lightning-input>
+                    <lightning-input name="nip" type="text" label="NIP firmy" pattern="([0-9]{10})" onchange={validateNip} required></lightning-input>
+                    <lightning-input name="accountName" disabled={isAccountExist} type="text" label="Firma" value={account.Name} required></lightning-input>
+                    <lightning-input name="website" disabled={isAccountExist} type="text" label="Strona internetowa" value={account.Website}></lightning-input>
                     <lightning-input-address
                                     name="address"
                                     disabled={isAccountExist}
@@ -24,9 +25,14 @@
                                     city-label="Miejscowość"
                                     postal-code-label="Kod pocztowy"
                                     country-label="Państwo"
-                                    province-label="Województwo"></lightning-input-address>
+                                    province-label="Województwo"
+                                    street={account.Street}
+                                    city={account.City}
+                                    country={account.Country}
+                                    province={account.State}
+                                    postal-code={account.PostalCode}></lightning-input-address>
 
-                    <lightning-input type="search" disabled={isAccountExist} label="# Tagi" onchange={matchTopic}></lightning-input>
+                    <lightning-input type="search" disabled={isAccountExist} pattern="^[A-Za-z0-9 ]+$" label="# Tagi" onchange={matchTopic}></lightning-input>
 
                     <template for:each={matchedTopics} for:item="t">
                             <a class="slds-p-left_small" key={t} onclick={pickTopic}>{t}</a>

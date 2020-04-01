@@ -1,21 +1,36 @@
 import { LightningElement, track, api, wire } from 'lwc';
 import saveContactAndAccount from '@salesforce/apex/BniController.saveContactAndAccount';
 import getAccount from '@salesforce/apex/BniController.getAccount';
+import getTopics from '@salesforce/apex/BniController.getTopics';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class NewBniContact extends LightningElement {
+
+    ownerId = '0033X000032q6JTQAY';  //zmien na zalogowanego uzytkownika
     
     @track loaded = false;
     @track badgeTopics = [];
     @track matchedTopics = [];
-    @api topicsList;
+    @wire(getTopics) topicsList;
     isAccountExist = true;
-    @api accountId = '';
+    @track account = {
+        Id: '',
+        Name: '',
+        Street: '',
+        Website: '',
+        City: '',
+        PostalCode: '',
+        State: '',
+        Country: '',
+        Specjalizacja: ''
+    };
 
     matchTopic(event){
+        console.log(event.target.value);
+        console.log(JSON.stringify(this.topicsList));
         const newTopic = event.target.value;
         this.matchedTopics = [newTopic];
-        this.topicsList.forEach( item => {
+        this.topicsList.data.forEach( item => {
             if(newTopic && this.badgeTopics.indexOf(item) == -1){
                 if(item.toLowerCase().indexOf(newTopic.toLowerCase()) != -1){
                     this.matchedTopics.push(item);
@@ -33,7 +48,7 @@ export default class NewBniContact extends LightningElement {
                 .then(result => {
                     if(result.Id){
                         this.showToastMessage('Firma ' + result.Name + ' jest już zapisana', 'success', ' ');
-                        this.accountId = result.Id;
+                        this.account.Id = result.Id;
                         this.showExistingAccountDetails(result);
                         this.isAccountExist = true;
                     }
@@ -49,18 +64,14 @@ export default class NewBniContact extends LightningElement {
     }
 
     showExistingAccountDetails(account){
-        /*this.template.querySelectorAll("lightning-input").forEach(element => {
-            if(element.name == 'accountName'){
-                element.value = account.Name;
-            }
-            else if(element.name == 'website'){
-                element.value = account.Website;
-            }
-        });
-//BillingStreet, BillingCity, BillingCountry, BillingPostalCode, BillingState
-        const inp = this.template.querySelectorAll("lightning-input_input");
-        console.log(inp[0].name);
-        //inp[0].value = account.BillingStreet;*/
+        this.account.Name = account.Name;
+        this.account.Website = account.Website;
+        this.account.City = account.BillingCity;
+        this.account.PostalCode = account.BillingPostalCode;
+        this.account.State = account.BillingState;
+        this.account.Country = account.BillingCountry;
+        this.account.Street = account.BillingStreet;
+        this.badgeTopics = account.Specjalizacja__c.split(';');
     }
 
     pickTopic(event){
@@ -74,8 +85,19 @@ export default class NewBniContact extends LightningElement {
     }
 
     saveContact(event){
+        const allValid = [...this.template.querySelectorAll('lightning-input')]
+            .reduce((validSoFar, inputCmp) => {
+                        inputCmp.reportValidity();
+                        return validSoFar && inputCmp.checkValidity();
+            }, true);
+        if(!allValid){
+            this.showToastMessage('Wprowadź poprawne dane', 'error', '');
+            return;
+        }
+
         this.loaded = true;
-        let jsonStr = '{\"accountId\":' + '\"' + this.accountId + '\",';
+        let jsonStr = '{\"accountId\":' + '\"' + this.account.Id + '\",';
+        jsonStr += '\"ownerId\":' + '\"' + this.ownerId + '\",';
         var inp = this.template.querySelectorAll("lightning-input");
         inp.forEach(element => {
             if(element.type!='search'){
@@ -106,7 +128,7 @@ export default class NewBniContact extends LightningElement {
             .then(result => {
                 if(result == 'Dodano kontakt'){
                     this.showToastMessage(result, 'success', '');
-                    this.handleToggleClick();
+                    document.location.href='/bni'
                 }
                 else{
                     this.showToastMessage('Nie udało się zapisać kontaktu', 'error', result);
@@ -127,9 +149,5 @@ export default class NewBniContact extends LightningElement {
             }),
         );
         this.loaded = false;
-    }
-
-    handleToggleClick(){
-        this.dispatchEvent(new CustomEvent('switchnewcontact'));
     }
 }
